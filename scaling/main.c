@@ -17,14 +17,14 @@ typedef struct
 
 const      double        BEGIN       = 1;
 const      double        RANGE       = 1 << 27;
-const long long unsigned SAMPLES_NUM = ((long long int)1) << 31;
+const long long unsigned SAMPLES_NUM = ((long long int)1) << 32;
 
 void* compute_integral(void* arg);
 void* extra_thread(void* arg);
 
 int main(int argc, char** argv)
 {
-    // Declarations and initializations
+    /* Declarations and initializations */
     int cores_num = 0;
     pthread_t   threads[32] = {0};
     pthread_t   extra_threads[32] = {0};
@@ -39,10 +39,10 @@ int main(int argc, char** argv)
 
     FILE* cpuinfo_file = NULL;
 
-    // Handle argument
+    /* Handle argument */
     if (argc != 2)
     {
-        printf("Usage: ./error_function N_CORES\n");
+        printf("Usage: ./logarithm N_CORES\n");
         exit(1);
     }
 
