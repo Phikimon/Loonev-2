@@ -47,11 +47,9 @@ int main(int argc, char** argv)
     }
 
     cores_num = atoi(argv[1]);
-
-    // Check number of cores
-    if (cores_num > get_nprocs() / 2) //< Taking in account hyperthreading
+    if (cores_num <= 0)
     {
-        printf("Not enough physical cores.\nAborting\n");
+        printf("N_CORES should be positive");
         exit(1);
     }
 
@@ -96,11 +94,20 @@ int main(int argc, char** argv)
         int psn_ret = pthread_attr_setaffinity_np(&pta, sizeof(cpu_set_t), &cpu_set);
         assert(psn_ret != -1);
         //Create threads
-        int ptc_ret = pthread_create(&threads[i], &pta,
+        int ptc_ret;
+        if (i < cores_num) {
+            ptc_ret = pthread_create(&threads[i], &pta,
+                                         compute_integral, &args[i]);
+            assert(ptc_ret != -1);
+        } else {
+            ptc_ret = pthread_create(&extra_threads[i], &pta,
+                                         extra_thread, NULL);
+            assert(ptc_ret != -1);
+        }
+    }
+    for (i = get_nprocs() / 2; i < cores_num; i++) {
+        int ptc_ret = pthread_create(&threads[i], NULL,
                                      compute_integral, &args[i]);
-        assert(ptc_ret != -1);
-        ptc_ret = pthread_create(&extra_threads[i], &pta,
-                                     extra_thread, NULL);
         assert(ptc_ret != -1);
     }
 
