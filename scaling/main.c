@@ -57,7 +57,8 @@ int main(int argc, char** argv)
 
     // Share interval among threads
     double threadwise_range = RANGE / cores_num;
-    for (int i = 0; i < cores_num; i++)
+    int i;
+    for (i = 0; i < cores_num; i++)
     {
         args[i].begin = BEGIN + threadwise_range * i;
         args[i].delta = RANGE / SAMPLES_NUM;
@@ -69,7 +70,7 @@ int main(int argc, char** argv)
     assert(cpuinfo_file);
     int cpu_num = 0, core_num = 0;
 
-    for (int i = 0; i < cores_num; i++)
+    for (i = 0; i < get_nprocs() / 2; i++)
     {
         //Choose physical cpu
         CPU_ZERO(&cpu_set);
@@ -102,11 +103,12 @@ int main(int argc, char** argv)
                                      extra_thread, NULL);
         assert(ptc_ret != -1);
     }
+
     fclose(cpuinfo_file);
 
     // Wait for threads to compute integral
     double integral = 0;
-    for (int i = 0; i < cores_num; i++)
+    for (i = 0; i < cores_num; i++)
     {
         pthread_join(threads[i], NULL);
         integral += args[i].integral;
