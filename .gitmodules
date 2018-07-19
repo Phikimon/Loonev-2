@@ -1,0 +1,3 @@
+[submodule "avr_simulator"]
+	path = avr_simulator
+	url = https://github.com/Phikimon/avr_simulator
